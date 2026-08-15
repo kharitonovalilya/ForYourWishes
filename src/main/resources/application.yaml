@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: ForYourWishes
+  jpa:
+    hibernate:
+      ddl-auto: create
