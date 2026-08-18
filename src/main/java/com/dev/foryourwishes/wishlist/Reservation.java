@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
+@Table(name = "reservations")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Reservation {

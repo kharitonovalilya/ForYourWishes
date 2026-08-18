@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table(name = "wishlists")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Wishlist {
@@ -15,7 +16,7 @@ public class Wishlist {
     @GeneratedValue
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 50)
     private String title;
 
     private String description;
@@ -28,7 +29,7 @@ public class Wishlist {
     @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
 
-    @OneToMany(mappedBy = "wishlist_id", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "wishlist", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Wish> wishes = new ArrayList<>();
 
     public void archive() {
