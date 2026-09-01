@@ -20,4 +20,9 @@ public class Reservation {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "reserved_by_id", nullable = false)
     private User reservedBy;
+
+    public Reservation(Wish wish, User reservedBy) {
+        this.wish = wish;
+        this.reservedBy = reservedBy;
+    }
 }

@@ -1,7 +1,7 @@
 package com.dev.foryourwishes.wishlist.exceptions;
 
-public class WishNotFound extends RuntimeException {
-    public WishNotFound(Long wishId) {
+public class WishNotFoundException extends RuntimeException {
+    public WishNotFoundException(Long wishId) {
         super("Wish not found with id: " + wishId);
     }
 }
