@@ -59,9 +59,6 @@ public class WishlistManagerService {
 
     public Wishlist unarchiveWishlist(Long wishlistId) {
         Wishlist wishlist = findById(wishlistId);
-        if (wishlist.getStatus() == WishlistStatus.ARCHIVED) {
-            throw new WishlistArchivedException(wishlistId);
-        }
         wishlist.unarchive();
         return wishlistRepository.save(wishlist);
     }

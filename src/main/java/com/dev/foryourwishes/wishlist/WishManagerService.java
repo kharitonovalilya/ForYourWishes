@@ -2,9 +2,7 @@ package com.dev.foryourwishes.wishlist;
 
 import com.dev.foryourwishes.user.User;
 import com.dev.foryourwishes.user.UserManagerService;
-import com.dev.foryourwishes.wishlist.exceptions.WishIsFulfilledException;
-import com.dev.foryourwishes.wishlist.exceptions.WishNotFoundException;
-import com.dev.foryourwishes.wishlist.exceptions.WishlistArchivedException;
+import com.dev.foryourwishes.wishlist.exceptions.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -28,40 +26,45 @@ public class WishManagerService {
 
     public Wish editWish(Long wishId, String newTitle, String newDescription, String newUrl) {
         Wish wish = findById(wishId);
+        Wishlist wishlist = wish.getWishlist();
+        if (wishlist.getStatus() == WishlistStatus.ARCHIVED) {
+            throw new WishlistArchivedException(wishlist.getId());
+        }
         wish.editWish(newTitle, newDescription, newUrl);
         return wishRepository.save(wish);
     }
 
     public Wish markAsFulfilled(Long wishId) {
         Wish wish = findById(wishId);
+        Wishlist wishlist = wish.getWishlist();
+        if (wishlist.getStatus() == WishlistStatus.ARCHIVED) {
+            throw new WishlistArchivedException(wishlist.getId());
+        }
         wish.markAsFulfilled();
         return wishRepository.save(wish);
     }
 
     public Reservation reserveWish(Long wishId, Long userId) {
         Wish wish = findById(wishId);
-        if (wish.getStatus() == WishStatus.RESERVED) {
-            throw new WishIsFulfilledException(wishId);
-        }
         if (wish.getStatus() == WishStatus.FULFILLED) {
             throw new WishIsFulfilledException(wishId);
+        }
+        if (reservationRepository.existsByWishId(wishId)) {
+            throw new WishIsReservedException(wishId);
         }
         User user = userManagerService.findById(userId);
         Wishlist wishlist = wish.getWishlist();
         if (wishlist.getStatus() == WishlistStatus.ARCHIVED) {
             throw new WishlistArchivedException(wishlist.getId());
         }
-        User owner = wishlist.getOwner();
-        if (owner.getId().equals(userId)) {
-            throw new IllegalArgumentException("User id = %d cannot reserve own wish".formatted(userId));
+        if (wishlist.getOwner().getId().equals(userId)) {
+            throw new OwnWishReservationException(userId);
         }
         Reservation reservation = new Reservation(wish, user);
-        wish.markAsReserved();
-        wishRepository.save(wish);
         return reservationRepository.save(reservation);
     }
 
-    public void cancelReservation(Long wishId) {
+    public void cancelReservation(Long wishId, Long userId) {
         Wish wish = findById(wishId);
         if (wish.getStatus() == WishStatus.FULFILLED) {
             throw new WishIsFulfilledException(wishId);
@@ -70,6 +73,12 @@ public class WishManagerService {
         if (wishlist.getStatus() == WishlistStatus.ARCHIVED) {
             throw new WishlistArchivedException(wishlist.getId());
         }
+        Reservation reservation = reservationRepository.findByWishId(wishId)
+                .orElseThrow(() -> new ReservationNotFoundException(wishId));
+        if (!reservation.getReservedBy().getId().equals(wish.getId())) {
+            throw new ReservationAccessDeniedException(reservation.getId());
+        }
+        reservationRepository.save(reservation);
     }
 
 }

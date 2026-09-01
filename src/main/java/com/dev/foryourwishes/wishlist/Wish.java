@@ -38,10 +38,6 @@ public class Wish {
         this.status = WishStatus.FULFILLED;
     }
 
-    public void markAsReserved() {
-        this.status = WishStatus.RESERVED;
-    }
-
     public void editWish(String newTitle, String newDescription, String newUrl) {
         this.title = newTitle;
         this.description = newDescription;
