@@ -39,4 +39,17 @@ public class Wishlist {
     public void unarchive() {
         this.status = WishlistStatus.ACTIVE;
     }
+
+    public Wishlist(String title, String description, User owner) {
+        this.title = title;
+        this.description = description;
+        this.owner = owner;
+        this.status = WishlistStatus.ACTIVE;
+    }
+
+    public void edit(String newTitle, String newDescription) {
+        this.title = newTitle;
+        this.description = newDescription;
+    }
+
 }

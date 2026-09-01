@@ -1,4 +1,4 @@
-package com.dev.foryourwishes.exceptions;
+package com.dev.foryourwishes.user.exceptions;
 
 public class UserNotFoundException extends RuntimeException {
     public UserNotFoundException(Long userId) {

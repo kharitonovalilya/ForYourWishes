@@ -25,4 +25,22 @@ public class Wish {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private WishStatus status;
+
+    public Wish(String title, String description, String url, Wishlist wishlist) {
+        this.title = title;
+        this.description = description;
+        this.url = url;
+        this.wishlist = wishlist;
+        this.status = WishStatus.ACTIVE;
+    }
+
+    public void markAsFulfilled() {
+        this.status = WishStatus.FULFILLED;
+    }
+
+    public void editWish(String newTitle, String newDescription, String newUrl) {
+        this.title = newTitle;
+        this.description = newDescription;
+        this.url = newUrl;
+    }
 }
