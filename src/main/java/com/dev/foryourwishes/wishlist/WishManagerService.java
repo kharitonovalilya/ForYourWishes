@@ -3,9 +3,9 @@ package com.dev.foryourwishes.wishlist;
 import com.dev.foryourwishes.user.User;
 import com.dev.foryourwishes.user.UserManagerService;
 import com.dev.foryourwishes.wishlist.exceptions.*;
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @AllArgsConstructor
@@ -21,10 +21,12 @@ public class WishManagerService {
                 .orElseThrow(() -> new WishNotFoundException(wishId));
     }
 
+    @Transactional
     public void deleteWish(Long wishId) {
         wishRepository.deleteById(wishId);
     }
 
+    @Transactional
     public Wish editWish(Long wishId, String newTitle, String newDescription, String newUrl) {
         Wish wish = findById(wishId);
         Wishlist wishlist = wish.getWishlist();
@@ -35,17 +37,18 @@ public class WishManagerService {
         return wishRepository.save(wish);
     }
 
-    public Wish markAsFulfilled(Long wishId) {
+    @Transactional
+    public void markAsFulfilled(Long wishId) {
         Wish wish = findById(wishId);
         Wishlist wishlist = wish.getWishlist();
         if (wishlist.getStatus() == WishlistStatus.ARCHIVED) {
             throw new WishlistArchivedException(wishlist.getId());
         }
         wish.markAsFulfilled();
-        return wishRepository.save(wish);
+        reservationRepository.deleteByWishId(wishId);
     }
 
-    @Transactional(Transactional.TxType.REQUIRES_NEW)
+    @Transactional
     public Reservation reserveWish(Long wishId, Long userId) {
         Wish wish = findById(wishId);
         if (wish.getStatus() == WishStatus.FULFILLED) {
@@ -66,7 +69,7 @@ public class WishManagerService {
         return reservationRepository.save(reservation);
     }
 
-    @Transactional(Transactional.TxType.REQUIRES_NEW)
+    @Transactional
     public void cancelReservation(Long wishId, Long userId) {
         Wish wish = findById(wishId);
         if (wish.getStatus() == WishStatus.FULFILLED) {
@@ -78,10 +81,10 @@ public class WishManagerService {
         }
         Reservation reservation = reservationRepository.findByWishId(wishId)
                 .orElseThrow(() -> new ReservationNotFoundException(wishId));
-        if (!reservation.getReservedBy().getId().equals(wish.getId())) {
+        if (!reservation.getReservedBy().getId().equals(userId)) {
             throw new ReservationAccessDeniedException(reservation.getId());
         }
-        reservationRepository.save(reservation);
+        reservationRepository.delete(reservation);
     }
 
 }

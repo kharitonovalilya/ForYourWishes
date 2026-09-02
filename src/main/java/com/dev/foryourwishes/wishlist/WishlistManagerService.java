@@ -4,9 +4,10 @@ import com.dev.foryourwishes.user.User;
 import com.dev.foryourwishes.user.UserManagerService;
 import com.dev.foryourwishes.wishlist.exceptions.WishlistArchivedException;
 import com.dev.foryourwishes.wishlist.exceptions.WishlistNotFoundException;
-import jakarta.transaction.Transactional;
+
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @AllArgsConstructor
@@ -15,20 +16,21 @@ public class WishlistManagerService {
     private final WishlistRepository wishlistRepository;
     private final WishRepository wishRepository;
     private final UserManagerService userManagerService;
+    private final ReservationRepository reservationRepository;
 
     public Wishlist findById(Long wishlistId) {
         return wishlistRepository.findById(wishlistId)
                 .orElseThrow(() -> new WishlistNotFoundException(wishlistId));
     }
 
-    @Transactional(Transactional.TxType.REQUIRES_NEW)
+    @Transactional
     public Wishlist createWishlist(Long ownerId, String title, String description) {
         User owner = userManagerService.findById(ownerId);
         Wishlist newWishlist = new Wishlist(title, description, owner);
         return wishlistRepository.save(newWishlist);
     }
 
-    @Transactional(Transactional.TxType.REQUIRES_NEW)
+    @Transactional
     public Wish addWishToWishlist(Long wishlistId, String title, String description, String url) {
         Wishlist wishlist = findById(wishlistId);
         if (wishlist.getStatus() == WishlistStatus.ARCHIVED) {
@@ -38,6 +40,7 @@ public class WishlistManagerService {
         return wishRepository.save(wish);
     }
 
+    @Transactional
     public Wishlist editWishlist(Long wishlistId, String newTitle, String newDescription) {
         Wishlist wishlist = findById(wishlistId);
         if (wishlist.getStatus() == WishlistStatus.ARCHIVED) {
@@ -47,19 +50,23 @@ public class WishlistManagerService {
         return wishlistRepository.save(wishlist);
     }
 
+    @Transactional
     public void deleteWishlist(Long wishlistId) {
         wishlistRepository.deleteById(wishlistId);
     }
 
-    public Wishlist archiveWishlist(Long wishlistId) {
+    // TODO test how hibernate works on this
+    @Transactional
+    public void archiveWishlist(Long wishlistId) {
         Wishlist wishlist = findById(wishlistId);
         if (wishlist.getStatus() == WishlistStatus.ARCHIVED) {
             throw new WishlistArchivedException(wishlistId);
         }
         wishlist.archive();
-        return wishlistRepository.save(wishlist);
+        reservationRepository.deleteAllByWishWishlistId(wishlistId);
     }
 
+    @Transactional
     public Wishlist unarchiveWishlist(Long wishlistId) {
         Wishlist wishlist = findById(wishlistId);
         wishlist.unarchive();
