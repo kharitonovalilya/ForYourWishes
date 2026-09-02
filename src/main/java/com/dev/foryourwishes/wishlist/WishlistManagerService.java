@@ -41,21 +41,20 @@ public class WishlistManagerService {
     }
 
     @Transactional
-    public Wishlist editWishlist(Long wishlistId, String newTitle, String newDescription) {
+    public void editWishlist(Long wishlistId, String newTitle, String newDescription) {
         Wishlist wishlist = findById(wishlistId);
         if (wishlist.getStatus() == WishlistStatus.ARCHIVED) {
             throw new WishlistArchivedException(wishlistId);
         }
         wishlist.edit(newTitle, newDescription);
-        return wishlistRepository.save(wishlist);
     }
 
     @Transactional
     public void deleteWishlist(Long wishlistId) {
+        reservationRepository.deleteAllByWishWishlistId(wishlistId);
         wishlistRepository.deleteById(wishlistId);
     }
 
-    // TODO test how hibernate works on this
     @Transactional
     public void archiveWishlist(Long wishlistId) {
         Wishlist wishlist = findById(wishlistId);
@@ -67,10 +66,9 @@ public class WishlistManagerService {
     }
 
     @Transactional
-    public Wishlist unarchiveWishlist(Long wishlistId) {
+    public void unarchiveWishlist(Long wishlistId) {
         Wishlist wishlist = findById(wishlistId);
         wishlist.unarchive();
-        return wishlistRepository.save(wishlist);
     }
 
 }

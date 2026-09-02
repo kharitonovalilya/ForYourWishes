@@ -13,7 +13,6 @@ public class WishManagerService {
 
     private final WishRepository wishRepository;
     private final ReservationRepository reservationRepository;
-    private final ReservationManagerService reservationManagerService;
     private final UserManagerService userManagerService;
 
     public Wish findById(Long wishId) {
@@ -23,18 +22,18 @@ public class WishManagerService {
 
     @Transactional
     public void deleteWish(Long wishId) {
+        reservationRepository.deleteByWishId(wishId);
         wishRepository.deleteById(wishId);
     }
 
     @Transactional
-    public Wish editWish(Long wishId, String newTitle, String newDescription, String newUrl) {
+    public void editWish(Long wishId, String newTitle, String newDescription, String newUrl) {
         Wish wish = findById(wishId);
         Wishlist wishlist = wish.getWishlist();
         if (wishlist.getStatus() == WishlistStatus.ARCHIVED) {
             throw new WishlistArchivedException(wishlist.getId());
         }
         wish.editWish(newTitle, newDescription, newUrl);
-        return wishRepository.save(wish);
     }
 
     @Transactional
@@ -71,14 +70,6 @@ public class WishManagerService {
 
     @Transactional
     public void cancelReservation(Long wishId, Long userId) {
-        Wish wish = findById(wishId);
-        if (wish.getStatus() == WishStatus.FULFILLED) {
-            throw new WishIsFulfilledException(wishId);
-        }
-        Wishlist wishlist = wish.getWishlist();
-        if (wishlist.getStatus() == WishlistStatus.ARCHIVED) {
-            throw new WishlistArchivedException(wishlist.getId());
-        }
         Reservation reservation = reservationRepository.findByWishId(wishId)
                 .orElseThrow(() -> new ReservationNotFoundException(wishId));
         if (!reservation.getReservedBy().getId().equals(userId)) {

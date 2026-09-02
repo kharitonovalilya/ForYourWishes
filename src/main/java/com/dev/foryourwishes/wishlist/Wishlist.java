@@ -29,9 +29,6 @@ public class Wishlist {
     @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
 
-    @OneToMany(mappedBy = "wishlist", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Wish> wishes = new ArrayList<>();
-
     public void archive() {
         this.status = WishlistStatus.ARCHIVED;
     }

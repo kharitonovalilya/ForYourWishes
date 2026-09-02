@@ -19,9 +19,9 @@ public class User {
     private String login;
 
     @Column(nullable = false)
-    private Long passwordHash;
+    private String passwordHash;
 
-    public User(String email, String login, Long passwordHash) {
+    public User(String email, String login, String passwordHash) {
         this.email = email;
         this.login = login;
         this.passwordHash = passwordHash;
