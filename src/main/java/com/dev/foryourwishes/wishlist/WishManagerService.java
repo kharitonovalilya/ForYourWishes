@@ -3,6 +3,7 @@ package com.dev.foryourwishes.wishlist;
 import com.dev.foryourwishes.user.User;
 import com.dev.foryourwishes.user.UserManagerService;
 import com.dev.foryourwishes.wishlist.exceptions.*;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -44,6 +45,7 @@ public class WishManagerService {
         return wishRepository.save(wish);
     }
 
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
     public Reservation reserveWish(Long wishId, Long userId) {
         Wish wish = findById(wishId);
         if (wish.getStatus() == WishStatus.FULFILLED) {
@@ -64,6 +66,7 @@ public class WishManagerService {
         return reservationRepository.save(reservation);
     }
 
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
     public void cancelReservation(Long wishId, Long userId) {
         Wish wish = findById(wishId);
         if (wish.getStatus() == WishStatus.FULFILLED) {

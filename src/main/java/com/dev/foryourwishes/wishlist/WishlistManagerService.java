@@ -4,6 +4,7 @@ import com.dev.foryourwishes.user.User;
 import com.dev.foryourwishes.user.UserManagerService;
 import com.dev.foryourwishes.wishlist.exceptions.WishlistArchivedException;
 import com.dev.foryourwishes.wishlist.exceptions.WishlistNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,12 +21,14 @@ public class WishlistManagerService {
                 .orElseThrow(() -> new WishlistNotFoundException(wishlistId));
     }
 
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
     public Wishlist createWishlist(Long ownerId, String title, String description) {
         User owner = userManagerService.findById(ownerId);
         Wishlist newWishlist = new Wishlist(title, description, owner);
         return wishlistRepository.save(newWishlist);
     }
 
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
     public Wish addWishToWishlist(Long wishlistId, String title, String description, String url) {
         Wishlist wishlist = findById(wishlistId);
         if (wishlist.getStatus() == WishlistStatus.ARCHIVED) {
