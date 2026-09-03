@@ -55,7 +55,7 @@ public class WishManagerService {
     }
 
     @Transactional
-    public Reservation reserveWish(Long wishId, Long userId) {
+    public void reserveWish(Long wishId, Long userId) {
         Wish wish = findById(wishId);
         if (wish.getStatus() == WishStatus.FULFILLED) {
             throw new WishFulfilledException(wishId);
@@ -72,7 +72,7 @@ public class WishManagerService {
             throw new OwnWishReservationException(userId);
         }
         Reservation reservation = new Reservation(wish, user);
-        return reservationRepository.save(reservation);
+        reservationRepository.save(reservation);
     }
 
     @Transactional
