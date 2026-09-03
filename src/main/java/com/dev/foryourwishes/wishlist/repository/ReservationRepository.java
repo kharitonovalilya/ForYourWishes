@@ -1,5 +1,6 @@
-package com.dev.foryourwishes.wishlist;
+package com.dev.foryourwishes.wishlist.repository;
 
+import com.dev.foryourwishes.wishlist.entity.Reservation;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

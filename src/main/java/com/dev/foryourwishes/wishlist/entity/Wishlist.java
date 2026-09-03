@@ -1,11 +1,9 @@
-package com.dev.foryourwishes.wishlist;
+package com.dev.foryourwishes.wishlist.entity;
 
 import com.dev.foryourwishes.user.User;
+import com.dev.foryourwishes.wishlist.WishlistStatus;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "wishlists")

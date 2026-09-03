@@ -1,5 +1,6 @@
-package com.dev.foryourwishes.wishlist;
+package com.dev.foryourwishes.wishlist.entity;
 
+import com.dev.foryourwishes.wishlist.WishStatus;
 import jakarta.persistence.*;
 import lombok.*;
 

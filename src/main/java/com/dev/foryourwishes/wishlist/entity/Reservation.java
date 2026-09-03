@@ -1,4 +1,4 @@
-package com.dev.foryourwishes.wishlist;
+package com.dev.foryourwishes.wishlist.entity;
 
 import com.dev.foryourwishes.user.User;
 import jakarta.persistence.*;

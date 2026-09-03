@@ -1,4 +1,4 @@
-package com.dev.foryourwishes.wishlist.exceptions;
+package com.dev.foryourwishes.wishlist.exception;
 
 public class WishlistArchivedException extends RuntimeException {
     public WishlistArchivedException(Long wishlistId) {

@@ -1,7 +1,8 @@
-package com.dev.foryourwishes.wishlist;
+package com.dev.foryourwishes.wishlist.service;
 
-import com.dev.foryourwishes.user.User;
-import com.dev.foryourwishes.wishlist.exceptions.ReservationNotFoundException;
+import com.dev.foryourwishes.wishlist.entity.Reservation;
+import com.dev.foryourwishes.wishlist.exception.ReservationNotFoundException;
+import com.dev.foryourwishes.wishlist.repository.ReservationRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 

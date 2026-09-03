@@ -1,4 +1,4 @@
-package com.dev.foryourwishes.wishlist.exceptions;
+package com.dev.foryourwishes.wishlist.exception;
 
 public class ReservationAccessDeniedException extends RuntimeException {
     public ReservationAccessDeniedException(Long reservationId) {

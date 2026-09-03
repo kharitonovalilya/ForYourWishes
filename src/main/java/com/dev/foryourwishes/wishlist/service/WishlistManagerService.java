@@ -1,10 +1,16 @@
-package com.dev.foryourwishes.wishlist;
+package com.dev.foryourwishes.wishlist.service;
 
 import com.dev.foryourwishes.user.User;
 import com.dev.foryourwishes.user.UserManagerService;
-import com.dev.foryourwishes.wishlist.exceptions.WishlistArchivedException;
-import com.dev.foryourwishes.wishlist.exceptions.WishlistNotFoundException;
+import com.dev.foryourwishes.wishlist.WishlistStatus;
+import com.dev.foryourwishes.wishlist.entity.Wish;
+import com.dev.foryourwishes.wishlist.entity.Wishlist;
+import com.dev.foryourwishes.wishlist.exception.WishlistArchivedException;
+import com.dev.foryourwishes.wishlist.exception.WishlistNotFoundException;
 
+import com.dev.foryourwishes.wishlist.repository.ReservationRepository;
+import com.dev.foryourwishes.wishlist.repository.WishRepository;
+import com.dev.foryourwishes.wishlist.repository.WishlistRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

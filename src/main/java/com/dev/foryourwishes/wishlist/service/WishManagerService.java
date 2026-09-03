@@ -1,8 +1,15 @@
-package com.dev.foryourwishes.wishlist;
+package com.dev.foryourwishes.wishlist.service;
 
 import com.dev.foryourwishes.user.User;
 import com.dev.foryourwishes.user.UserManagerService;
-import com.dev.foryourwishes.wishlist.exceptions.*;
+import com.dev.foryourwishes.wishlist.WishStatus;
+import com.dev.foryourwishes.wishlist.WishlistStatus;
+import com.dev.foryourwishes.wishlist.entity.Reservation;
+import com.dev.foryourwishes.wishlist.entity.Wish;
+import com.dev.foryourwishes.wishlist.entity.Wishlist;
+import com.dev.foryourwishes.wishlist.exception.*;
+import com.dev.foryourwishes.wishlist.repository.ReservationRepository;
+import com.dev.foryourwishes.wishlist.repository.WishRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,10 +58,10 @@ public class WishManagerService {
     public Reservation reserveWish(Long wishId, Long userId) {
         Wish wish = findById(wishId);
         if (wish.getStatus() == WishStatus.FULFILLED) {
-            throw new WishIsFulfilledException(wishId);
+            throw new WishFulfilledException(wishId);
         }
         if (reservationRepository.existsByWishId(wishId)) {
-            throw new WishIsReservedException(wishId);
+            throw new WishReservedException(wishId);
         }
         User user = userManagerService.findById(userId);
         Wishlist wishlist = wish.getWishlist();
