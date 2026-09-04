@@ -63,11 +63,11 @@ public class WishManagerService {
         if (reservationRepository.existsByWishId(wishId)) {
             throw new WishReservedException(wishId);
         }
-        User user = userManagerService.findById(userId);
         Wishlist wishlist = wish.getWishlist();
         if (wishlist.getStatus() == WishlistStatus.ARCHIVED) {
             throw new WishlistArchivedException(wishlist.getId());
         }
+        User user = userManagerService.findById(userId);
         if (wishlist.getOwner().getId().equals(userId)) {
             throw new OwnWishReservationException(userId);
         }

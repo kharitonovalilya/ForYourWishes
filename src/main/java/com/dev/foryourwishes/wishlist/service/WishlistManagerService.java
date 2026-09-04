@@ -58,6 +58,7 @@ public class WishlistManagerService {
     @Transactional
     public void deleteWishlist(Long wishlistId) {
         reservationRepository.deleteAllByWishWishlistId(wishlistId);
+        wishRepository.deleteAllByWishlistId(wishlistId);
         wishlistRepository.deleteById(wishlistId);
     }
 
