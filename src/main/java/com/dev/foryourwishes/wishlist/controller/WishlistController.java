@@ -2,6 +2,7 @@ package com.dev.foryourwishes.wishlist.controller;
 
 import com.dev.foryourwishes.security.AuthUser;
 import com.dev.foryourwishes.wishlist.dto.CreateWishlistRequest;
+import com.dev.foryourwishes.wishlist.dto.EditWishlistRequest;
 import com.dev.foryourwishes.wishlist.dto.WishlistResponse;
 import com.dev.foryourwishes.wishlist.entity.Wishlist;
 import com.dev.foryourwishes.wishlist.repository.WishlistRepository;
@@ -20,7 +21,9 @@ public class WishlistController {
 
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
-    public WishlistResponse createWishlist(@RequestBody CreateWishlistRequest request, @AuthenticationPrincipal AuthUser currentUser) {
+    public WishlistResponse createWishlist
+            (@RequestBody CreateWishlistRequest request,
+             @AuthenticationPrincipal AuthUser currentUser) {
         Wishlist wishlist = wishlistManagerService.createWishlist(
                 currentUser.getId(),
                 request.title(),
@@ -29,6 +32,19 @@ public class WishlistController {
         return new WishlistResponse(wishlist.getId(), wishlist.getTitle(), wishlist.getDescription());
     }
 
-
+    @PatchMapping("/edit/{wishlistId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void editWishlist(
+            @RequestBody EditWishlistRequest request,
+            @AuthenticationPrincipal AuthUser currentUser,
+            @PathVariable Long wishlistId
+            ){
+        wishlistManagerService.editWishlist(
+                wishlistId,
+                request.newTitle(),
+                request.newDescription(),
+                currentUser.getId()
+        );
+    }
 
 }

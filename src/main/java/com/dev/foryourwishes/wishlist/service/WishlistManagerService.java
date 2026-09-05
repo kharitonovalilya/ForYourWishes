@@ -5,6 +5,7 @@ import com.dev.foryourwishes.user.UserManagerService;
 import com.dev.foryourwishes.wishlist.WishlistStatus;
 import com.dev.foryourwishes.wishlist.entity.Wish;
 import com.dev.foryourwishes.wishlist.entity.Wishlist;
+import com.dev.foryourwishes.wishlist.exception.WishlistAccessDeniedException;
 import com.dev.foryourwishes.wishlist.exception.WishlistArchivedException;
 import com.dev.foryourwishes.wishlist.exception.WishlistNotFoundException;
 
@@ -47,11 +48,12 @@ public class WishlistManagerService {
     }
 
     @Transactional
-    public void editWishlist(Long wishlistId, String newTitle, String newDescription) {
+    public void editWishlist(Long wishlistId, String newTitle, String newDescription, Long userId) {
         Wishlist wishlist = findById(wishlistId);
         if (wishlist.getStatus() == WishlistStatus.ARCHIVED) {
             throw new WishlistArchivedException(wishlistId);
         }
+        checkOwner(wishlist, userId);
         wishlist.edit(newTitle, newDescription);
     }
 
@@ -76,6 +78,12 @@ public class WishlistManagerService {
     public void unarchiveWishlist(Long wishlistId) {
         Wishlist wishlist = findById(wishlistId);
         wishlist.unarchive();
+    }
+
+    private void checkOwner(Wishlist wishlist, Long userId) {
+        if (!wishlist.getOwner().getId().equals(userId)) {
+            throw new WishlistAccessDeniedException(wishlist.getId(), userId);
+        }
     }
 
 }
