@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final UserManagerService userManagerService;
-    private final AuthService authService;
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
@@ -23,11 +22,6 @@ public class AuthController {
                 request.email(), request.login(), request.password()
         );
         return new UserResponse(user.getId(), user.getEmail(), user.getLogin());
-    }
-
-    @PostMapping("/login")
-    public void login(@RequestBody LoginRequest request) {
-        authService.login(request.login(), request.password());
     }
 
 }
