@@ -3,6 +3,7 @@ package com.dev.foryourwishes.wishlist.service;
 import com.dev.foryourwishes.user.User;
 import com.dev.foryourwishes.user.UserManagerService;
 import com.dev.foryourwishes.wishlist.WishlistStatus;
+import com.dev.foryourwishes.wishlist.dto.WishlistSummaryResponse;
 import com.dev.foryourwishes.wishlist.entity.Wish;
 import com.dev.foryourwishes.wishlist.entity.Wishlist;
 import com.dev.foryourwishes.wishlist.exception.WishlistAccessDeniedException;
@@ -15,6 +16,8 @@ import com.dev.foryourwishes.wishlist.repository.WishlistRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -38,8 +41,9 @@ public class WishlistManagerService {
     }
 
     @Transactional
-    public Wish addWishToWishlist(Long wishlistId, String title, String description, String url) {
+    public Wish addWishToWishlist(Long wishlistId, String title, String description, String url, Long userId) {
         Wishlist wishlist = findById(wishlistId);
+        checkOwner(wishlist, userId);
         if (wishlist.getStatus() == WishlistStatus.ARCHIVED) {
             throw new WishlistArchivedException(wishlistId);
         }
@@ -50,23 +54,26 @@ public class WishlistManagerService {
     @Transactional
     public void editWishlist(Long wishlistId, String newTitle, String newDescription, Long userId) {
         Wishlist wishlist = findById(wishlistId);
+        checkOwner(wishlist, userId);
         if (wishlist.getStatus() == WishlistStatus.ARCHIVED) {
             throw new WishlistArchivedException(wishlistId);
         }
-        checkOwner(wishlist, userId);
         wishlist.edit(newTitle, newDescription);
     }
 
     @Transactional
-    public void deleteWishlist(Long wishlistId) {
+    public void deleteWishlist(Long wishlistId, Long userId) {
+        Wishlist wishlist = findById(wishlistId);
+        checkOwner(wishlist, userId);
         reservationRepository.deleteAllByWishWishlistId(wishlistId);
         wishRepository.deleteAllByWishlistId(wishlistId);
-        wishlistRepository.deleteById(wishlistId);
+        wishlistRepository.delete(wishlist);
     }
 
     @Transactional
-    public void archiveWishlist(Long wishlistId) {
+    public void archiveWishlist(Long wishlistId, Long userId) {
         Wishlist wishlist = findById(wishlistId);
+        checkOwner(wishlist, userId);
         if (wishlist.getStatus() == WishlistStatus.ARCHIVED) {
             throw new WishlistArchivedException(wishlistId);
         }
@@ -75,9 +82,18 @@ public class WishlistManagerService {
     }
 
     @Transactional
-    public void unarchiveWishlist(Long wishlistId) {
+    public void unarchiveWishlist(Long wishlistId, Long userId) {
         Wishlist wishlist = findById(wishlistId);
+        checkOwner(wishlist, userId);
         wishlist.unarchive();
+    }
+
+    @Transactional
+    public List<WishlistSummaryResponse> getWishlistsByUserId(Long userId, WishlistStatus status) {
+        List<Wishlist> wishlists = wishlistRepository.findAllByOwnerIdAndStatus(userId, status);
+        return wishlists.stream()
+                .map(wishlist -> new WishlistSummaryResponse(wishlist.getId(), wishlist.getTitle(), wishlist.getDescription(), wishlist.getStatus()))
+                .toList();
     }
 
     private void checkOwner(Wishlist wishlist, Long userId) {

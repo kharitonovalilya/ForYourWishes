@@ -46,7 +46,7 @@ class WishlistManagerServiceIntegrationTest {
 
         Long wishlistId = wishlist.getId();
         Long wishId = wish.getId();
-        wishlistManagerService.deleteWishlist(wishlist.getId());
+        wishlistManagerService.deleteWishlist(wishlist.getId(), owner.getId());
 
         assertFalse(wishlistRepository.existsById(wishlistId));
         assertFalse(wishRepository.existsById(wishId));
