@@ -2,10 +2,7 @@ package com.dev.foryourwishes.wishlist.controller;
 
 import com.dev.foryourwishes.security.AuthUser;
 import com.dev.foryourwishes.wishlist.WishlistStatus;
-import com.dev.foryourwishes.wishlist.dto.CreateWishlistRequest;
-import com.dev.foryourwishes.wishlist.dto.EditWishlistRequest;
-import com.dev.foryourwishes.wishlist.dto.WishlistResponse;
-import com.dev.foryourwishes.wishlist.dto.WishlistSummaryResponse;
+import com.dev.foryourwishes.wishlist.dto.*;
 import com.dev.foryourwishes.wishlist.entity.Wishlist;
 import com.dev.foryourwishes.wishlist.service.WishlistManagerService;
 import lombok.RequiredArgsConstructor;
@@ -88,4 +85,11 @@ public class WishlistController {
         wishlistManagerService.unarchiveWishlist(wishlistId, currentUser.getId());
     }
 
+    @GetMapping("/{wishlistId}")
+    public WishlistDetailsResponse getWishlist(
+            @AuthenticationPrincipal AuthUser currentUser,
+            @PathVariable Long wishlistId
+    ) {
+
+    }
 }
